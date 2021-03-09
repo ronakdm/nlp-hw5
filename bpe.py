@@ -2,6 +2,9 @@ import numpy as np
 
 
 def get_vocab(words):
+    """
+    From a list of words/types (training data), recover the vocabulary.
+    """
     vocab = {}
     vocab_list = []
     index = 0
@@ -16,6 +19,9 @@ def get_vocab(words):
 
 
 def load_data(filename="A5-data.txt"):
+    """
+    Load data file and vocabulary.
+    """
     with open(filename, "r") as f:
         words = f.read().split()
 
@@ -28,6 +34,9 @@ def load_data(filename="A5-data.txt"):
 
 
 def count_tokens_and_bigrams(words, vocab, vocab_list):
+    """
+    Count the number of tokens (sequence length) and frequency of each bigram.
+    """
     vocab_size = len(vocab_list)
     # counts[i, j] = prob of bigram (i,j)
     counts = np.zeros((vocab_size, vocab_size), dtype=int)
@@ -44,6 +53,9 @@ def count_tokens_and_bigrams(words, vocab, vocab_list):
 
 
 def merge_bigram(words, type1, type2):
+    """
+    Given a bigram (word1, word2), merge all instances of it in the sequence of words.
+    """
     for word in words:
         # Iterate over bigrams in this word.
         i = 1
@@ -59,7 +71,10 @@ def merge_bigram(words, type1, type2):
 
 
 def train(words, vocab, vocab_list, target_vocab_size=np.inf):
-
+    """
+    Run BPE algorithm until maximum frequency of any bigram is one, 
+    or reaching target vocabulary size.
+    """
     counts, _ = count_tokens_and_bigrams(words, vocab, vocab_list)
 
     vocab_sizes = []
@@ -90,6 +105,9 @@ def train(words, vocab, vocab_list, target_vocab_size=np.inf):
 
 
 def encode(word, merges):
+    """
+    Encode a new word using the merge history of the training set.
+    """
     words = [list(word) + ["<s>"]]
     for type1, type2 in merges:
         words = merge_bigram(words, type1, type2)
